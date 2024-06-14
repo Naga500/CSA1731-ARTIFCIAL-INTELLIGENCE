@@ -1,0 +1,36 @@
+from collections import deque
+
+class State:
+    def __init__(self, left_missionaries, left_cannibals, boat, right_missionaries, right_cannibals):
+        self.left_missionaries = left_missionaries
+        self.left_cannibals = left_cannibals
+        self.boat = boat
+        self.right_missionaries = right_missionaries
+        self.right_cannibals = right_cannibals
+
+    def __eq__(self, other):
+        return (self.left_missionaries == other.left_missionaries and
+                self.left_cannibals == other.left_cannibals and
+                self.boat == other.boat and
+                self.right_missionaries == other.right_missionaries and
+                self.right_cannibals == other.right_cannibals)
+
+    def __hash__(self):
+        return hash((self.left_missionaries, self.left_cannibals, self.boat, self.right_missionaries, self.right_cannibals))
+
+    def __repr__(self):
+        return f"({self.left_missionaries}, {self.left_cannibals}, {'🚣' if self.boat == 'left' else '   '}, {self.right_missionaries}, {self.right_cannibals})"
+
+def is_valid_state(state):
+    if state.left_missionaries < 0 or state.left_cannibals < 0 or state.right_missionaries < 0 or state.right_cannibals < 0:
+        return False
+    if state.left_missionaries > 3 or state.left_cannibals > 3 or state.right_missionaries > 3 or state.right_cannibals > 3:
+        return False
+    if (state.left_missionaries < state.left_cannibals and state.left_missionaries > 0) or \
+       (state.right_missionaries < state.right_cannibals and state.right_missionaries > 0):
+        return False
+    return True
+
+def get_next_states(state):
+    next_states = []
+    if state
