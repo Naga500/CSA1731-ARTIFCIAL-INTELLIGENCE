@@ -1,0 +1,60 @@
+from collections import deque
+class State:
+    def __init__(self, x, y):
+        self.x = x  # Amount of water in jug X
+        self.y = y  # Amount of water in jug Y
+
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y
+
+    def __hash__(self):
+        return hash((self.x, self.y))
+
+    def __repr__(self):
+        return f"({self.x}, {self.y})"
+def water_jug_problem(capacity_x, capacity_y, target):
+    start_state = State(0, 0)
+    visited = set()
+    queue = deque([(start_state, [])])
+
+    while queue:
+        current_state, path = queue.popleft()
+
+        if current_state in visited:
+            continue
+
+        visited.add(current_state)
+
+        if current_state.x == target:
+            return path + [(current_state.x, current_state.y)]
+        if current_state.x > 0:
+            # Pour until jug Y is full or jug X is empty
+            pour_amount = min(current_state.x, capacity_y - current_state.y)
+            new_state = State(current_state.x - pour_amount, current_state.y + pour_amount)
+            queue.append((new_state, path + [(current_state.x, current_state.y)]))
+        if current_state.y > 0:
+            # Pour until jug X is full or jug Y is empty
+            pour_amount = min(current_state.y, capacity_x - current_state.x)
+            new_state = State(current_state.x + pour_amount, current_state.y - pour_amount)
+            queue.append((new_state, path + [(current_state.x, current_state.y)]))
+        new_state = State(0, current_state.y)
+        queue.append((new_state, path + [(current_state.x, current_state.y)]))
+        new_state = State(current_state.x, 0)
+        queue.append((new_state, path + [(current_state.x, current_state.y)]))
+        new_state = State(capacity_x, current_state.y)
+        queue.append((new_state, path + [(current_state.x, current_state.y)]))
+        new_state = State(current_state.x, capacity_y)
+        queue.append((new_state, path + [(current_state.x, current_state.y)]))
+
+    return None
+capacity_x = 4
+capacity_y = 3
+target = 2
+
+path = water_jug_problem(capacity_x, capacity_y, target)
+if path:
+    print("Solution found:")
+    for state in path:
+        print(state)
+else:
+    print("No solution exists.")
