@@ -1,0 +1,71 @@
+class VacuumCleaner:
+    def __init__(self, grid):
+        self.grid = grid
+        self.rows = len(grid)
+        self.cols = len(grid[0])
+        self.moves = [(0, 1), (1, 0), (0, -1), (-1, 0)]  # Right, Down, Left, Up
+
+    def clean_room(self):
+        dirty_cells = self.find_dirty_cells()
+        current_pos = (0, 0)
+        path = []
+
+        while dirty_cells:
+            next_pos = self.find_nearest_dirty_cell(current_pos, dirty_cells)
+            path.extend(self.move_to_position(current_pos, next_pos))
+            self.clean_cell(next_pos)
+            dirty_cells.remove(next_pos)
+            current_pos = next_pos
+
+        return path
+
+    def find_dirty_cells(self):
+        dirty_cells = []
+        for i in range(self.rows):
+            for j in range(self.cols):
+                if self.grid[i][j] == 1:
+                    dirty_cells.append((i, j))
+        return dirty_cells
+
+    def find_nearest_dirty_cell(self, current_pos, dirty_cells):
+        min_distance = float('inf')
+        nearest_cell = None
+
+        for cell in dirty_cells:
+            distance = abs(cell[0] - current_pos[0]) + abs(cell[1] - current_pos[1])
+            if distance < min_distance:
+                min_distance = distance
+                nearest_cell = cell
+
+        return nearest_cell
+
+    def move_to_position(self, current_pos, next_pos):
+        path = []
+        dx = next_pos[0] - current_pos[0]
+        dy = next_pos[1] - current_pos[1]
+
+        if dx > 0:
+            path.extend(['D'] * dx)
+        elif dx < 0:
+            path.extend(['U'] * abs(dx))
+
+        if dy > 0:
+            path.extend(['R'] * dy)
+        elif dy < 0:
+            path.extend(['L'] * abs(dy))
+
+        return path
+
+    def clean_cell(self, cell):
+        self.grid[cell[0]][cell[1]] = 0
+        print(f"Cleaning cell {cell}")
+grid = [
+    [1, 0, 1, 0, 1],
+    [0, 1, 0, 1, 0],
+    [1, 0, 1, 0, 1],
+    [0, 1, 0, 1, 0]
+]
+
+vacuum_cleaner = VacuumCleaner(grid)
+path = vacuum_cleaner.clean_room()
+print("Path taken by the vacuum cleaner:", path)
