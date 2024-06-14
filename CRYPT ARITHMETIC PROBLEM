@@ -1,0 +1,26 @@
+import itertools
+
+def solve_cryptarithmetic(puzzle):
+    letters = set(ch for ch in puzzle if ch.isalpha())
+    if len(letters) > 10:
+        return None  # More than 10 letters, impossible to solve
+    for permutation in itertools.permutations(range(10), len(letters)):
+        mapping = dict(zip(letters, permutation))
+        if evaluate_expression(puzzle, mapping):
+            return mapping
+    return None
+
+def evaluate_expression(expression, mapping):
+    replaced_expression = ''.join(str(mapping.get(ch, ch)) for ch in expression)
+    try:
+        return eval(replaced_expression)
+    except ZeroDivisionError:
+        return False  # Division by zero is not allowed
+puzzle = "SEND + MORE == MONEY"
+solution = solve_cryptarithmetic(puzzle)
+if solution:
+    print("Solution found:")
+    for key, value in solution.items():
+        print(f"{key} = {value}")
+else:
+    print("No solution found.")
